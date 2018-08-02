@@ -3,9 +3,11 @@ package filemanager;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,6 +25,7 @@ import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
 
 
+
 /**
  * Servlet implementation class FileUpload
  */
@@ -37,6 +40,17 @@ public class FileUpload extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
+    public void init(ServletConfig config) throws ServletException {
+		// TODO Auto-generated method stub
+		super.init(config);
+		
+		// Create dummy data
+		ArrayList<Files> fileEntries = new ArrayList<Files>();
+		
+		// Persist this data to the servlet context
+		getServletContext().setAttribute("file", fileEntries);
+	}
+
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -81,18 +95,20 @@ public class FileUpload extends HttpServlet {
 				}
 				catch(Exception e)
 				{
-					System.out.println("Exception "+e);		
+					System.out.println("Exception "+ e);		
 				}
 			} 
 			else {
 				try
 				 {
-				
 				String itemName = item.getName();
 				System.out.println("\n FileName: "+itemName);
-				File savedFile = new File(filePath+itemName);
-				System.out.println(savedFile);
-				System.out.println("done");
+				Files savedFile = new Files(filePath+itemName);
+				Files fileOb = new Files(itemName);
+		        ArrayList<Files> file = (ArrayList<Files>) getServletContext().getAttribute(
+		            "file" );
+		        file.add(fileOb);
+				response.sendRedirect("FileUpload");
 				} 
 				catch (Exception e) 
 				{
